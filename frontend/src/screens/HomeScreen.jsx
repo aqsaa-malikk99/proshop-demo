@@ -1,23 +1,34 @@
-import React from 'react'
-import {Row, Col} from 'react-bootstrap'
-import products from '../products'
-import Product from '../components/Product'
+import React from "react";
+import { useEffect, useState } from "react";
+import { Row, Col } from "react-bootstrap";
+import Product from "../components/Product";
+import axios from "axios";
 
 const HomeScreen = () => {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("/api/products")
+      .then((response) => {
+        setProducts(response.data);
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the products!", error);
+      });
+  }, []);
   return (
     <>
-    <h1>Latest Products</h1>
-    <Row>
-        {products.map((product)=>(
+      <h1>Latest Products</h1>
+      <Row>
+        {products.map((product) => (
           <Col key={product._id} sm={12} md={6} lg={4} xl={3}>
-            <Product product={product}/>
+            <Product product={product} />
           </Col>
         ))}
-    </Row>
-    
-    
+      </Row>
     </>
-  )
-}
+  );
+};
 
-export default HomeScreen
+export default HomeScreen;
