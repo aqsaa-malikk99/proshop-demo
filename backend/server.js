@@ -1,29 +1,25 @@
 import express from "express";
-
 import dotenv from "dotenv";
-import cors from "cors";
-
 dotenv.config();
+import connectDB from "./config/db.js";
+import productRoutes from "./routes/productRoutes.js";
+import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
+
 const port = process.env.PORT || 5000;
-import products from "./data/products.js";
+
+connectDB();
+
 const app = express();
 
+app.use("/api/products", productRoutes);
+
 app.get("/", (req, res) => {
-  res.send("Hello I am working great!");
+  res.send("API is running...");
 });
 
-app.get("/api/products", (req, res) => {
-  res.json(products);
-});
+app.use(notFound);
+app.use(errorHandler);
 
-app.get("/api/products/:id", (req, res) => {
-  const product = products.find((p) => p._id === req.params.id);
-
-  res.json(product);
-});
-// Enable CORS for all routes
-app.use(cors()); // Allow requests from any origin
-
-app.listen(port, () => {
-  console.log("Happy Serving!");
-});
+app.listen(port, () =>
+  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${port}`)
+);
